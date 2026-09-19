@@ -391,6 +391,7 @@ async function runPipeline() {
 
 function init() {
     const AUTO = params.get("auto") === "1";
+    log("INIT", "auto=" + AUTO + " noauto=" + NO_AUTO + " forced=" + FORCE_FW + " ua=" + (navigator.userAgent || "").slice(0, 80));
     if (NO_AUTO) {
         state("noauto=1 — reload without it to run", "warn");
         return;
