@@ -13,11 +13,17 @@ const BUILD = "arw-1350-1";
 const LOG_MAX = 1200;
 const TARGET_FW = "13.50";
 
-const params = new URLSearchParams(location.search);
-const VERBOSE_PRIM = params.get("verbose") === "1";
-const PROBE_MODULES = params.get("modules") === "1";
-const NO_AUTO = params.get("noauto") === "1";
-const FORCE_FW = params.get("force") === "1";
+// Fallback param parsing (PS4 compat) - URLSearchParams may fail
+function getParam(name) {
+    const m = location.search.match(new RegExp("[?&]" + name + "=([^&]*)"));
+    return m ? decodeURIComponent(m[1]) : null;
+}
+const params = new URLSearchParams(location.search); // kept for compat
+const VERBOSE_PRIM = (params.get("verbose") || getParam("verbose")) === "1";
+const PROBE_MODULES = (params.get("modules") || getParam("modules")) === "1";
+const NO_AUTO = (params.get("noauto") || getParam("noauto")) === "1";
+const FORCE_FW = (params.get("force") || getParam("force")) === "1";
+const AUTO = (params.get("auto") || getParam("auto")) === "1";
 const lines = [];
 const retain = [];
 let started = false;
@@ -390,7 +396,6 @@ async function runPipeline() {
 }
 
 function init() {
-    const AUTO = params.get("auto") === "1";
     log("INIT", "auto=" + AUTO + " noauto=" + NO_AUTO + " forced=" + FORCE_FW + " ua=" + (navigator.userAgent || "").slice(0, 80));
     if (NO_AUTO) {
         state("noauto=1 — reload without it to run", "warn");
