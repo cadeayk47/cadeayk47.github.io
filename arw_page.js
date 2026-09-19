@@ -408,9 +408,11 @@ function init() {
     log("ARM", "(?auto=1 restores immediate run)");
     const startOnce = () => {
         document.removeEventListener("click", startOnce, true);
+        document.removeEventListener("touchstart", startOnce, true);
         runPipeline();
     };
     document.addEventListener("click", startOnce, true);
+    document.addEventListener("touchstart", startOnce, true);
 }
 
 init();
