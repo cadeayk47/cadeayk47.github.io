@@ -290,12 +290,32 @@ if (!location.search)
 (() => {
   "use strict";
 
+  // IMMEDIATE LOGGING - runs before any modules load
+  function earlyLog(tag, detail) {
+    const o = document.getElementById("out");
+    if (o) {
+      const line = tag + (detail ? "  " + detail : "");
+      o.textContent += (o.textContent ? "\n" : "") + line;
+      o.scrollTop = o.scrollHeight;
+    }
+  }
+
+  // Parse URL params without URLSearchParams (PS4 compat)
+  function getParam(name) {
+    const m = location.search.match(new RegExp("[?&]" + name + "=([^&]*)"));
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  const auto = getParam("auto") === "1";
+  const verbose = getParam("verbose") === "1";
+  earlyLog("EARLY", "auto=" + auto + " verbose=" + verbose + " ua=" + (navigator.userAgent || "").slice(0, 60));
+
   /* ---------- User agent badge ---------- */
   const uaBadge = document.getElementById("ua-badge");
   if (uaBadge) {
     const ua = (navigator.userAgent || "").trim() || "unavailable";
     uaBadge.textContent = "UA: " + ua;
-    uaBadge.title = ua; // full string on hover if it's clipped
+    uaBadge.title = ua;
   }
 
   /* ---------- Cat image fallback (Discord CDN links expire) ---------- */
@@ -328,7 +348,6 @@ if (!location.search)
     };
 
     cat.addEventListener("error", useFallback);
-    // The error may already have fired before this script ran.
     if (cat.complete && cat.naturalWidth === 0) useFallback();
   }
 
@@ -336,7 +355,7 @@ if (!location.search)
 })();
 </script>
 <script type="module" src="./goldhen.js?v=14"></script>
-<script type="module" src="./arw_page.js?v=8"></script>
+<script type="module" src="./arw_page.js?v=10"></script>
 <script type="module" src="./k0_raw13g.js?v=2"></script>
 </body>
 </html>
